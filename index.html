@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Last.fm Monthly Topster</title>
+    <title>Last.fm Widget</title>
     <style>
         * {
             margin: 0;
@@ -12,10 +12,11 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            padding: 20px;
-            min-height: 100vh;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica', 'Arial', sans-serif;
+            background: #ffffff;
+            color: #37352f;
+            padding: 24px;
+            line-height: 1.5;
         }
 
         .container {
@@ -23,127 +24,263 @@
             margin: 0 auto;
         }
 
-        .header {
-            text-align: center;
-            color: white;
-            margin-bottom: 30px;
-        }
-
-        .header h1 {
-            font-size: 2.5em;
-            margin-bottom: 10px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-        }
-
-        .header p {
-            font-size: 1.1em;
-            opacity: 0.9;
-        }
-
-        .config-panel {
-            background: white;
-            border-radius: 12px;
-            padding: 25px;
-            margin-bottom: 30px;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
-        }
-
-        .config-panel h2 {
-            margin-bottom: 20px;
-            color: #333;
-        }
-
-        .form-group {
-            margin-bottom: 15px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: 600;
-            color: #555;
-        }
-
-        .form-group input {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid #e0e0e0;
+        /* Setup Panel */
+        .setup-panel {
+            background: #f7f6f3;
+            border: 1px solid #e9e9e7;
             border-radius: 8px;
-            font-size: 1em;
-            transition: border-color 0.3s;
+            padding: 20px;
+            margin-bottom: 20px;
         }
 
-        .form-group input:focus {
+        .setup-panel h3 {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: #37352f;
+        }
+
+        .setup-panel input {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #e9e9e7;
+            border-radius: 4px;
+            font-size: 14px;
+            background: white;
+            margin-bottom: 10px;
+        }
+
+        .setup-panel input:focus {
             outline: none;
-            border-color: #667eea;
+            border-color: #2383e2;
         }
 
-        .form-group small {
-            display: block;
-            margin-top: 5px;
-            color: #888;
-        }
-
-        button {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        .setup-panel button {
+            background: #2383e2;
             color: white;
             border: none;
-            padding: 12px 30px;
-            border-radius: 8px;
-            font-size: 1em;
-            font-weight: 600;
+            padding: 8px 16px;
+            border-radius: 4px;
+            font-size: 14px;
             cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
+            font-weight: 500;
         }
 
-        button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        .setup-panel button:hover {
+            background: #1a6ec0;
         }
 
-        button:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-            transform: none;
+        .setup-panel small {
+            font-size: 12px;
+            color: #787774;
         }
 
-        .grid {
+        /* Header */
+        .header {
+            margin-bottom: 16px;
+        }
+
+        .time-period-selector {
+            display: inline-block;
+            position: relative;
+        }
+
+        .time-period-button {
+            background: none;
+            border: none;
+            font-size: 32px;
+            font-weight: 700;
+            color: #37352f;
+            cursor: pointer;
+            padding: 4px 8px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .time-period-button:hover {
+            background: #f7f6f3;
+        }
+
+        .dropdown-arrow {
+            font-size: 20px;
+            color: #9b9a97;
+        }
+
+        .time-period-dropdown {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background: white;
+            border: 1px solid #e9e9e7;
+            border-radius: 4px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            z-index: 100;
+            min-width: 150px;
+            margin-top: 4px;
+        }
+
+        .time-period-dropdown.show {
+            display: block;
+        }
+
+        .time-period-option {
+            padding: 8px 12px;
+            cursor: pointer;
+            font-size: 14px;
+            color: #37352f;
+        }
+
+        .time-period-option:hover {
+            background: #f7f6f3;
+        }
+
+        .time-period-option.active {
+            background: #e9e9e7;
+            font-weight: 500;
+        }
+
+        .username-link {
+            font-size: 14px;
+            color: #787774;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            margin-top: 4px;
+        }
+
+        .username-link:hover {
+            color: #37352f;
+        }
+
+        .arrow-icon {
+            font-size: 12px;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #e9e9e7;
+        }
+
+        .tab {
+            background: none;
+            border: none;
+            padding: 8px 12px;
+            font-size: 14px;
+            color: #787774;
+            cursor: pointer;
+            border-radius: 4px 4px 0 0;
+            font-weight: 500;
+        }
+
+        .tab:hover {
+            background: #f7f6f3;
+            color: #37352f;
+        }
+
+        .tab.active {
+            color: #37352f;
+            background: #f7f6f3;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Stats */
+        .stats {
+            display: flex;
+            gap: 32px;
+            margin-bottom: 24px;
+            font-size: 14px;
+        }
+
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: #37352f;
+        }
+
+        .stat-label {
+            color: #787774;
+            font-size: 14px;
+        }
+
+        /* Album Grid */
+        .album-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 16px;
+        }
+
+        @media (min-width: 768px) {
+            .album-grid {
+                grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .album-grid {
+                grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            }
         }
 
         .album-card {
-            background: white;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 4px 16px rgba(0,0,0,0.1);
-            transition: transform 0.3s, box-shadow 0.3s;
             cursor: pointer;
-        }
-
-        .album-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+            position: relative;
+            border-radius: 8px;
+            overflow: hidden;
         }
 
         .album-cover {
             width: 100%;
             aspect-ratio: 1;
             object-fit: cover;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: block;
+            border-radius: 8px;
+            background: #f7f6f3;
         }
 
-        .album-info {
-            padding: 15px;
+        .album-card:hover .album-cover {
+            opacity: 0.8;
+        }
+
+        .album-info-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+            color: white;
+            padding: 12px;
+            opacity: 0;
+            transition: opacity 0.2s;
+            border-radius: 0 0 8px 8px;
+        }
+
+        .album-card:hover .album-info-overlay {
+            opacity: 1;
         }
 
         .album-name {
-            font-weight: 700;
-            color: #333;
-            margin-bottom: 5px;
-            font-size: 0.95em;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 2px;
             line-height: 1.3;
             display: -webkit-box;
             -webkit-line-clamp: 2;
@@ -152,9 +289,9 @@
         }
 
         .artist-name {
-            color: #666;
-            font-size: 0.85em;
-            margin-bottom: 8px;
+            font-size: 11px;
+            opacity: 0.9;
+            margin-bottom: 4px;
             display: -webkit-box;
             -webkit-line-clamp: 1;
             -webkit-box-orient: vertical;
@@ -162,196 +299,309 @@
         }
 
         .play-count {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 4px 10px;
-            border-radius: 20px;
-            font-size: 0.8em;
-            font-weight: 600;
-            display: inline-block;
+            font-size: 11px;
+            opacity: 0.8;
         }
 
+        /* Recent Tracks */
+        .tracks-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .track-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 8px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .track-item:hover {
+            background: #f7f6f3;
+        }
+
+        .track-cover {
+            width: 48px;
+            height: 48px;
+            border-radius: 4px;
+            object-fit: cover;
+            background: #f7f6f3;
+            flex-shrink: 0;
+        }
+
+        .track-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .track-name {
+            font-size: 14px;
+            font-weight: 500;
+            color: #37352f;
+            margin-bottom: 2px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .track-artist {
+            font-size: 13px;
+            color: #787774;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .track-time {
+            font-size: 12px;
+            color: #9b9a97;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        /* Loading & Error */
         .loading {
             text-align: center;
-            color: white;
-            font-size: 1.2em;
             padding: 40px;
+            color: #787774;
+            font-size: 14px;
         }
 
         .error {
-            background: #ff6b6b;
-            color: white;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            text-align: center;
+            background: #ffeaea;
+            border: 1px solid #ffcccc;
+            color: #c93a3a;
+            padding: 12px;
+            border-radius: 4px;
+            margin-bottom: 16px;
+            font-size: 14px;
         }
 
-        .stats {
-            background: white;
-            border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 30px;
-            box-shadow: 0 4px 16px rgba(0,0,0,0.1);
-            display: flex;
-            justify-content: space-around;
-            flex-wrap: wrap;
-        }
-
-        .stat-item {
-            text-align: center;
-            padding: 10px;
-        }
-
-        .stat-value {
-            font-size: 2em;
-            font-weight: 700;
-            color: #667eea;
-        }
-
-        .stat-label {
-            color: #666;
-            font-size: 0.9em;
-            margin-top: 5px;
-        }
-
-        @media (max-width: 768px) {
-            .grid {
-                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-                gap: 15px;
-            }
-
-            .header h1 {
-                font-size: 1.8em;
-            }
+        .hidden {
+            display: none !important;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="header">
-            <h1>🎵 Last.fm Monthly Topster</h1>
-            <p>Your top albums from the last 30 days</p>
+        <!-- Setup Panel -->
+        <div class="setup-panel" id="setupPanel">
+            <h3>Enter your Last.fm username</h3>
+            <input type="text" id="usernameInput" placeholder="username">
+            <button onclick="saveUsername()">Save</button>
+            <br><br>
+            <small>Widget by <a href="https://last.fm" target="_blank">Last.fm</a></small>
         </div>
 
-        <div class="config-panel" id="configPanel">
-            <h2>Configuration</h2>
-            <div class="form-group">
-                <label for="username">Last.fm Username</label>
-                <input type="text" id="username" placeholder="Enter your Last.fm username">
+        <!-- Main Content -->
+        <div id="mainContent" class="hidden">
+            <!-- Header -->
+            <div class="header">
+                <div class="time-period-selector">
+                    <button class="time-period-button" onclick="toggleDropdown()">
+                        <span id="timePeriodLabel">Last 30 days</span>
+                        <span class="dropdown-arrow">▼</span>
+                    </button>
+                    <div class="time-period-dropdown" id="timePeriodDropdown">
+                        <div class="time-period-option" onclick="selectPeriod('7day', 'Last 7 days')">Last 7 days</div>
+                        <div class="time-period-option active" onclick="selectPeriod('1month', 'Last 30 days')">Last 30 days</div>
+                        <div class="time-period-option" onclick="selectPeriod('3month', 'Last 90 days')">Last 90 days</div>
+                        <div class="time-period-option" onclick="selectPeriod('12month', 'Last 365 days')">Last 365 days</div>
+                        <div class="time-period-option" onclick="selectPeriod('overall', 'All time')">All time</div>
+                    </div>
+                </div>
+                <a href="#" id="usernameLink" class="username-link" target="_blank">
+                    <span id="usernameDisplay"></span>
+                    <span class="arrow-icon">↗</span>
+                </a>
             </div>
-            <div class="form-group">
-                <label for="apiKey">Last.fm API Key</label>
-                <input type="text" id="apiKey" placeholder="Enter your API key">
-                <small>Get your free API key at <a href="https://www.last.fm/api/account/create" target="_blank">last.fm/api/account/create</a></small>
-            </div>
-            <button onclick="fetchData()">Load My Topster</button>
-        </div>
 
-        <div id="error"></div>
-        <div id="stats"></div>
-        <div id="loading"></div>
-        <div class="grid" id="albumGrid"></div>
+            <!-- Stats -->
+            <div class="stats" id="statsContainer">
+                <div class="stat-item">
+                    <span class="stat-value" id="artistCount">-</span>
+                    <span class="stat-label">Artists</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value" id="albumCount">-</span>
+                    <span class="stat-label">Albums</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value" id="trackCount">-</span>
+                    <span class="stat-label">Tracks</span>
+                </div>
+            </div>
+
+            <!-- Tabs -->
+            <div class="tabs">
+                <button class="tab active" onclick="switchTab('chart')">Chart</button>
+                <button class="tab" onclick="switchTab('recent')">Recent tracks</button>
+            </div>
+
+            <!-- Error -->
+            <div id="errorContainer"></div>
+
+            <!-- Loading -->
+            <div id="loadingContainer"></div>
+
+            <!-- Chart Tab -->
+            <div id="chartTab" class="tab-content active">
+                <div class="album-grid" id="albumGrid"></div>
+            </div>
+
+            <!-- Recent Tracks Tab -->
+            <div id="recentTab" class="tab-content">
+                <div class="tracks-list" id="tracksList"></div>
+            </div>
+        </div>
     </div>
 
     <script>
+        // Your API key (hardcoded)
+        const API_KEY = '636a4e93cbcf470a847fe48ee1641a76';
+        
         let username = localStorage.getItem('lastfm_username') || '';
-        let apiKey = localStorage.getItem('lastfm_apikey') || '';
+        let currentPeriod = '1month';
+        let currentTab = 'chart';
 
-        // Load saved credentials
-        if (username) document.getElementById('username').value = username;
-        if (apiKey) document.getElementById('apiKey').value = apiKey;
-
-        // Auto-load if credentials exist
-        if (username && apiKey) {
-            fetchData();
+        // Initialize
+        if (username) {
+            document.getElementById('usernameInput').value = username;
+            showMainContent();
         }
 
-        async function fetchData() {
-            const usernameInput = document.getElementById('username').value.trim();
-            const apiKeyInput = document.getElementById('apiKey').value.trim();
-
-            if (!usernameInput || !apiKeyInput) {
-                showError('Please enter both username and API key');
+        function saveUsername() {
+            const input = document.getElementById('usernameInput').value.trim();
+            if (!input) {
+                alert('Please enter a username');
                 return;
             }
+            username = input;
+            localStorage.setItem('lastfm_username', username);
+            showMainContent();
+        }
 
-            // Save credentials
-            localStorage.setItem('lastfm_username', usernameInput);
-            localStorage.setItem('lastfm_apikey', apiKeyInput);
-            username = usernameInput;
-            apiKey = apiKeyInput;
+        function showMainContent() {
+            document.getElementById('setupPanel').classList.add('hidden');
+            document.getElementById('mainContent').classList.remove('hidden');
+            document.getElementById('usernameDisplay').textContent = username;
+            document.getElementById('usernameLink').href = `https://www.last.fm/user/${username}`;
+            loadData();
+        }
 
-            document.getElementById('error').innerHTML = '';
-            document.getElementById('loading').innerHTML = '<div class="loading">Loading your top albums...</div>';
-            document.getElementById('albumGrid').innerHTML = '';
-            document.getElementById('stats').innerHTML = '';
+        function toggleDropdown() {
+            document.getElementById('timePeriodDropdown').classList.toggle('show');
+        }
 
+        function selectPeriod(period, label) {
+            currentPeriod = period;
+            document.getElementById('timePeriodLabel').textContent = label;
+            document.querySelectorAll('.time-period-option').forEach(opt => opt.classList.remove('active'));
+            event.target.classList.add('active');
+            toggleDropdown();
+            loadData();
+        }
+
+        function switchTab(tab) {
+            currentTab = tab;
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            if (tab === 'chart') {
+                document.getElementById('chartTab').classList.add('active');
+            } else {
+                document.getElementById('recentTab').classList.add('active');
+                if (document.getElementById('tracksList').children.length === 0) {
+                    loadRecentTracks();
+                }
+            }
+        }
+
+        async function loadData() {
+            showLoading('Loading...');
+            clearError();
+            
             try {
-                const period = '1month';
-                const limit = 25;
-                const url = `https://ws.audioscrobbler.com/2.0/?method=user.gettopalbums&user=${encodeURIComponent(username)}&period=${period}&limit=${limit}&api_key=${apiKey}&format=json`;
+                // Fetch top albums
+                const albumsUrl = `https://ws.audioscrobbler.com/2.0/?method=user.gettopalbums&user=${encodeURIComponent(username)}&period=${currentPeriod}&limit=50&api_key=${API_KEY}&format=json`;
+                const albumsResponse = await fetch(albumsUrl);
+                const albumsData = await albumsResponse.json();
 
+                if (albumsData.error) {
+                    throw new Error(albumsData.message || 'Failed to fetch data');
+                }
+
+                // Fetch top artists
+                const artistsUrl = `https://ws.audioscrobbler.com/2.0/?method=user.gettopartists&user=${encodeURIComponent(username)}&period=${currentPeriod}&limit=1&api_key=${API_KEY}&format=json`;
+                const artistsResponse = await fetch(artistsUrl);
+                const artistsData = await artistsResponse.json();
+
+                // Fetch top tracks
+                const tracksUrl = `https://ws.audioscrobbler.com/2.0/?method=user.gettoptracks&user=${encodeURIComponent(username)}&period=${currentPeriod}&limit=1&api_key=${API_KEY}&format=json`;
+                const tracksResponse = await fetch(tracksUrl);
+                const tracksData = await tracksResponse.json();
+
+                displayAlbums(albumsData.topalbums.album);
+                displayStats(
+                    artistsData.topartists['@attr']?.total || '0',
+                    albumsData.topalbums['@attr']?.total || '0',
+                    tracksData.toptracks['@attr']?.total || '0'
+                );
+
+                hideLoading();
+            } catch (error) {
+                showError(`Error: ${error.message}`);
+                hideLoading();
+            }
+        }
+
+        async function loadRecentTracks() {
+            showLoading('Loading recent tracks...');
+            
+            try {
+                const url = `https://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user=${encodeURIComponent(username)}&limit=20&api_key=${API_KEY}&format=json`;
                 const response = await fetch(url);
                 const data = await response.json();
 
                 if (data.error) {
-                    throw new Error(data.message || 'Last.fm API error');
+                    throw new Error(data.message || 'Failed to fetch recent tracks');
                 }
 
-                if (!data.topalbums || !data.topalbums.album || data.topalbums.album.length === 0) {
-                    showError('No albums found for this period. Make sure you\'ve been scrobbling!');
-                    return;
-                }
-
-                displayStats(data.topalbums);
-                displayAlbums(data.topalbums.album);
-                document.getElementById('loading').innerHTML = '';
+                displayRecentTracks(data.recenttracks.track);
+                hideLoading();
             } catch (error) {
                 showError(`Error: ${error.message}`);
-                document.getElementById('loading').innerHTML = '';
+                hideLoading();
             }
         }
 
-        function displayStats(topalbums) {
-            const albums = topalbums.album;
-            const totalPlays = albums.reduce((sum, album) => sum + parseInt(album.playcount), 0);
-            
-            document.getElementById('stats').innerHTML = `
-                <div class="stat-item">
-                    <div class="stat-value">${albums.length}</div>
-                    <div class="stat-label">Top Albums</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-value">${totalPlays}</div>
-                    <div class="stat-label">Total Plays</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-value">${topalbums['@attr'].user}</div>
-                    <div class="stat-label">User</div>
-                </div>
-            `;
+        function displayStats(artists, albums, tracks) {
+            document.getElementById('artistCount').textContent = formatNumber(artists);
+            document.getElementById('albumCount').textContent = formatNumber(albums);
+            document.getElementById('trackCount').textContent = formatNumber(tracks);
         }
 
         function displayAlbums(albums) {
             const grid = document.getElementById('albumGrid');
-            
+            grid.innerHTML = '';
+
             albums.forEach(album => {
                 const card = document.createElement('div');
                 card.className = 'album-card';
                 
-                // Get the largest available image
                 const imageUrl = album.image.find(img => img.size === 'extralarge')?.['#text'] || 
-                                album.image.find(img => img.size === 'large')?.['#text'] || 
-                                album.image[album.image.length - 1]['#text'] || 
-                                '';
+                                album.image.find(img => img.size === 'large')?.['#text'] || '';
 
                 card.innerHTML = `
-                    <img class="album-cover" src="${imageUrl}" alt="${album.name}" onerror="this.style.display='none'">
-                    <div class="album-info">
+                    <img class="album-cover" src="${imageUrl}" alt="${album.name}">
+                    <div class="album-info-overlay">
                         <div class="album-name">${album.name}</div>
                         <div class="artist-name">${album.artist.name}</div>
-                        <span class="play-count">${album.playcount} plays</span>
+                        <div class="play-count">${album.playcount} plays</div>
                     </div>
                 `;
 
@@ -360,15 +610,85 @@
             });
         }
 
-        function showError(message) {
-            document.getElementById('error').innerHTML = `<div class="error">${message}</div>`;
+        function displayRecentTracks(tracks) {
+            const list = document.getElementById('tracksList');
+            list.innerHTML = '';
+
+            tracks.forEach(track => {
+                const item = document.createElement('div');
+                item.className = 'track-item';
+                
+                const imageUrl = track.image.find(img => img.size === 'medium')?.['#text'] || '';
+                const isNowPlaying = track['@attr']?.nowplaying === 'true';
+                const timestamp = isNowPlaying ? 'Now playing' : formatTimestamp(track.date?.uts);
+
+                item.innerHTML = `
+                    <img class="track-cover" src="${imageUrl}" alt="${track.name}">
+                    <div class="track-info">
+                        <div class="track-name">${track.name}</div>
+                        <div class="track-artist">${track.artist['#text'] || track.artist}</div>
+                    </div>
+                    <div class="track-time">${timestamp}</div>
+                `;
+
+                item.onclick = () => window.open(track.url, '_blank');
+                list.appendChild(item);
+            });
         }
 
-        // Auto-refresh every 5 minutes if credentials are saved
-        if (username && apiKey) {
+        function formatTimestamp(timestamp) {
+            if (!timestamp) return '';
+            const date = new Date(timestamp * 1000);
+            const now = new Date();
+            const diff = now - date;
+            const minutes = Math.floor(diff / 60000);
+            const hours = Math.floor(diff / 3600000);
+            const days = Math.floor(diff / 86400000);
+
+            if (minutes < 1) return 'Just now';
+            if (minutes < 60) return `${minutes}m ago`;
+            if (hours < 24) return `${hours}h ago`;
+            if (days < 7) return `${days}d ago`;
+            
+            return date.toLocaleDateString();
+        }
+
+        function formatNumber(num) {
+            return parseInt(num).toLocaleString();
+        }
+
+        function showLoading(message) {
+            document.getElementById('loadingContainer').innerHTML = `<div class="loading">${message}</div>`;
+        }
+
+        function hideLoading() {
+            document.getElementById('loadingContainer').innerHTML = '';
+        }
+
+        function showError(message) {
+            document.getElementById('errorContainer').innerHTML = `<div class="error">${message}</div>`;
+        }
+
+        function clearError() {
+            document.getElementById('errorContainer').innerHTML = '';
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.time-period-selector')) {
+                document.getElementById('timePeriodDropdown').classList.remove('show');
+            }
+        });
+
+        // Auto-refresh every 2 minutes
+        if (username) {
             setInterval(() => {
-                fetchData();
-            }, 5 * 60 * 1000);
+                if (currentTab === 'chart') {
+                    loadData();
+                } else {
+                    loadRecentTracks();
+                }
+            }, 2 * 60 * 1000);
         }
     </script>
 </body>

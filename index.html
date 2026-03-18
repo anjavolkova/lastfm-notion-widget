@@ -1,8 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+ 	
  <link rel="preconnect" href="https://fonts.googleapis.com">
+	
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,100..900;1,9..144,100..900&display=swap" rel="stylesheet">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -20,8 +23,10 @@
     --text-muted: #a09d98;
     --accent: #e8442b;
     --radius: 8px;
+    --font-serif: Georgia, 'Times New Roman', serif;
     --font-serif: "Fraunces", serif;
     --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+   
     --right-col: 150px;
   }
 
@@ -31,20 +36,85 @@
     color: var(--text-primary);
     font-size: 13px;
     line-height: 1.5;
-    overflow: hidden;
     height: 100vh;
+    overflow: hidden;
   }
 
-  /* ── WIDGET SHELL ── */
-  #widget {
+  /* ── SETUP SCREEN ── */
+  #setup-screen {
+    position: fixed;
+    inset: 0;
+    background: var(--bg);
     display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 999;
+    padding: 24px;
+  }
+  #setup-card {
+    width: 100%;
+    max-width: 280px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  #setup-card h2 {
+    font-family: var(--font-serif);
+    font-size: 22px;
+    font-weight: 400;
+    color: var(--text-primary);
+  }
+  #setup-card p {
+    font-size: 12px;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin-top: -8px;
+  }
+  .setup-field { display: flex; flex-direction: column; gap: 5px; }
+  .setup-field label {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+  .setup-field input {
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 8px 10px;
+    font-size: 13px;
+    font-family: var(--font-sans);
+    color: var(--text-primary);
+    background: var(--bg);
+    outline: none;
+    transition: border-color 0.15s;
+    width: 100%;
+  }
+  .setup-field input:focus { border-color: var(--text-secondary); }
+  #setup-btn {
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 8px 16px;
+    font-size: 13px;
+    font-family: var(--font-serif);
+    color: var(--text-primary);
+    background: var(--surface);
+    cursor: pointer;
+    transition: background 0.15s;
+    align-self: flex-start;
+  }
+  #setup-btn:hover { background: var(--surface-hover); }
+  #setup-err { font-size: 11px; color: var(--accent); display: none; margin-top: -8px; }
+
+  /* ── WIDGET ── */
+  #widget {
+    display: none;
     flex-direction: row;
     height: 100vh;
     overflow: hidden;
-    gap: 0;
   }
 
-  /* ── LEFT COLUMN (tabs + grid/list) ── */
+  /* ── LEFT COL ── */
   #left-col {
     flex: 1;
     min-width: 0;
@@ -53,7 +123,6 @@
     overflow: hidden;
   }
 
-  /* TABS */
   #tabs {
     display: flex;
     gap: 2px;
@@ -72,273 +141,213 @@
     transition: all 0.15s;
   }
   .tab-btn:hover { color: var(--text-primary); background: var(--surface-hover); }
-  .tab-btn.active {
-    background: var(--surface);
-    color: var(--text-primary);
-  }
+  .tab-btn.active { background: var(--surface); color: var(--text-primary); }
 
-  /* CONTENT AREA */
-  #content {
-    flex: 1;
-    overflow: hidden;
-    position: relative;
-  }
+  #content { flex: 1; overflow: hidden; min-height: 0; }
 
-  /* ALBUM GRID */
+  /* ── CHART ── */
   #chart-view {
     height: 100%;
-    overflow-y: hidden;
-    padding: 4px 12px 10px;
+    padding: 4px 12px 8px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
   }
   #album-grid {
-    display: grid;
-    gap: 5px;
-    width: 100%;
+    display: none;
+    gap: 4px;
+    overflow: hidden;
   }
-
+  /* square cells via padding trick */
   .album-cell {
     position: relative;
-    aspect-ratio: 1;
-    border-radius: 6px;
+    border-radius: 5px;
     overflow: hidden;
     background: var(--surface);
     cursor: pointer;
   }
+  .album-cell::before { content: ''; display: block; padding-top: 100%; }
+  .album-cell img,
+  .no-art,
+  .album-tooltip {
+    position: absolute;
+    inset: 0;
+  }
   .album-cell img {
-    width: 100%;
-    height: 100%;
+    width: 100%; height: 100%;
     object-fit: cover;
     display: block;
     transition: transform 0.2s;
   }
-  .album-cell:hover img { transform: scale(1.05); }
-
+  .album-cell:hover img { transform: scale(1.06); }
+  .no-art {
+    display: flex; align-items: center; justify-content: center;
+    background: linear-gradient(135deg, #e8e5e0, #d0cdc8);
+    font-size: 8px; color: var(--text-muted); text-align: center; padding: 4px;
+  }
   .album-tooltip {
-    position: absolute;
-    inset: 0;
-    background: rgba(44,44,43,0.82);
+    background: rgba(30,29,28,0.78);
     color: #fff;
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
     padding: 7px;
     opacity: 0;
-    transition: opacity 0.18s;
-    backdrop-filter: blur(2px);
+    transition: opacity 0.16s;
+    backdrop-filter: blur(3px);
   }
   .album-cell:hover .album-tooltip { opacity: 1; }
-  .album-tooltip .tt-title {
-    font-weight: 600;
-    font-size: 10px;
-    line-height: 1.3;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
+  .tt-title {
+    font-family: var(--font-serif);
+    font-size: 10px; font-weight: 600; line-height: 1.3;
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
   }
-  .album-tooltip .tt-artist {
-    font-size: 9px;
-    color: rgba(255,255,255,0.7);
-    margin-top: 1px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-  .album-tooltip .tt-plays {
-    font-size: 9px;
-    color: rgba(255,255,255,0.5);
-    margin-top: 2px;
-  }
+  .tt-artist { font-size: 9px; color: rgba(255,255,255,0.65); margin-top: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .tt-plays  { font-size: 9px; color: rgba(255,255,255,0.45); margin-top: 2px; }
 
-  .album-cell .no-art {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: linear-gradient(135deg, #e8e5e0 0%, #d4d0cb 100%);
-    font-size: 8px;
-    color: var(--text-muted);
-    text-align: center;
-    padding: 4px;
-  }
-
-  /* RECENT TRACKS */
+  /* ── RECENT TRACKS ── */
   #recent-view {
+    display: none;
     height: 100%;
     overflow-y: auto;
-    padding: 4px 8px 10px;
-    display: none;
+    padding: 2px 8px 10px;
   }
   .track-item {
     display: flex;
     align-items: center;
-    gap: 8px;
-    padding: 5px 5px;
+    gap: 9px;
+    padding: 6px 5px;
     border-radius: 5px;
-    transition: background 0.12s;
     cursor: pointer;
+    transition: background 0.12s;
   }
   .track-item:hover { background: var(--surface); }
   .track-thumb {
-    width: 34px;
-    height: 34px;
-    border-radius: 3px;
+    width: 36px; height: 36px;
+    border-radius: 4px;
     object-fit: cover;
     flex-shrink: 0;
     background: var(--surface);
+    display: block;
   }
-  .track-thumb.no-img {
+  .track-thumb-placeholder {
+    width: 36px; height: 36px;
+    border-radius: 4px;
+    flex-shrink: 0;
+    background: var(--surface);
     display: flex;
     align-items: center;
     justify-content: center;
-    background: var(--surface);
     color: var(--text-muted);
-    font-size: 10px;
+    font-size: 14px;
   }
   .track-info { flex: 1; min-width: 0; }
   .track-name {
-    font-weight: 500;
-    font-size: 12px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    font-size: 12px; font-weight: 500;
     color: var(--text-primary);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
   }
   .track-artist {
-    font-size: 10px;
-    color: var(--text-secondary);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    font-size: 11px; color: var(--text-secondary);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    margin-top: 1px;
   }
   .track-time {
-    font-size: 10px;
-    color: var(--text-muted);
-    flex-shrink: 0;
-    text-align: right;
-    min-width: 38px;
+    font-size: 10px; color: var(--text-muted);
+    flex-shrink: 0; white-space: nowrap;
   }
-  .track-time.now-playing {
-    color: var(--accent);
-    font-weight: 600;
+  .track-time.live {
+    color: var(--accent); font-weight: 600;
+    display: flex; align-items: center; gap: 4px;
   }
+  .live-dot {
+    width: 5px; height: 5px;
+    background: var(--accent); border-radius: 50%;
+    animation: pulse 1.4s ease-in-out infinite;
+  }
+  @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.35;transform:scale(.6)} }
 
-  /* ── RIGHT COLUMN ── */
+  /* ── RIGHT COL ── */
   #right-col {
-    width: var(--right-col);
+    width: 148px;
     flex-shrink: 0;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    padding: 10px 14px 12px 8px;
-    overflow: hidden;
+    padding: 10px 14px 12px 6px;
   }
-
-  /* Period title */
   #period-wrapper { position: relative; }
   #period-btn {
     font-family: var(--font-serif);
-    font-size: clamp(18px, 4.5vw, 28px);
+    font-size: clamp(17px, 3.8vw, 26px);
     color: var(--text-primary);
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: 0;
-    text-align: left;
-    line-height: 1.2;
-    white-space: normal;
-    word-break: break-word;
-    display: flex;
-    align-items: flex-start;
-    gap: 4px;
+    background: none; border: none; cursor: pointer;
+    padding: 0; text-align: left; line-height: 1.2;
+    display: flex; align-items: flex-start; gap: 4px;
   }
   #period-btn:hover { color: var(--accent); }
-  #period-btn .chevron {
-    font-size: 0.5em;
-    color: var(--text-muted);
+  #period-btn .chev {
+    font-size: 0.45em; color: var(--text-muted);
+    margin-top: 5px; flex-shrink: 0;
     transition: transform 0.2s;
-    margin-top: 4px;
-    flex-shrink: 0;
   }
-  #period-btn.open .chevron { transform: rotate(180deg); }
-
+  #period-btn.open .chev { transform: rotate(180deg); }
   #period-dropdown {
     display: none;
-    position: absolute;
-    top: 100%;
-    right: 0;
+    position: absolute; top: calc(100% + 4px); right: 0;
     background: var(--bg);
     border: 1px solid var(--border);
-    border-radius: var(--radius);
-    box-shadow: 0 4px 20px rgba(0,0,0,0.12);
-    z-index: 100;
-    min-width: 150px;
-    overflow: hidden;
+    border-radius: 8px;
+    box-shadow: 0 6px 24px rgba(0,0,0,0.1);
+    z-index: 100; min-width: 155px; overflow: hidden;
   }
   #period-dropdown.open { display: block; }
   .period-option {
-    padding: 7px 12px;
-    cursor: pointer;
-    font-size: 13px;
-    color: var(--text-primary);
-    white-space: nowrap;
+    padding: 8px 13px; cursor: pointer;
+    font-size: 13px; color: var(--text-primary);
+    white-space: nowrap; transition: background 0.1s;
   }
   .period-option:hover { background: var(--surface-hover); }
   .period-option.active { color: var(--accent); font-weight: 600; }
 
-  /* Username */
   #username-link {
     font-family: var(--font-serif);
-    font-size: clamp(12px, 2.5vw, 16px);
+    font-size: clamp(12px, 2.2vw, 16px);
     color: var(--text-secondary);
     text-decoration: none;
-    display: flex;
-    align-items: center;
-    gap: 3px;
-    margin-top: 4px;
+    display: flex; align-items: center; gap: 3px;
+    margin-top: 5px;
   }
   #username-link:hover { color: var(--text-primary); }
 
-  /* Stats */
-  #stats {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
+  #change-user-btn {
+    background: none; border: none; cursor: pointer;
+    font-size: 10px; color: var(--text-muted);
+    padding: 0; margin-top: 4px;
+    font-family: var(--font-sans);
+    display: block; text-align: left;
   }
-  .stat-item { white-space: nowrap; }
-  .stat-num {
-    font-weight: 700;
-    font-size: clamp(12px, 2.5vw, 15px);
-    color: var(--text-primary);
-  }
-  .stat-label {
-    font-size: clamp(10px, 2vw, 13px);
-    color: var(--text-secondary);
-  }
+  #change-user-btn:hover { color: var(--text-secondary); text-decoration: underline; }
 
-  /* LOADING / ERROR */
+  #stats { display: flex; flex-direction: column; gap: 7px; }
+  .stat-item { white-space: nowrap; }
+  .stat-num { font-weight: 700; font-size: 14px; color: var(--text-primary); }
+  .stat-label { font-size: 12px; color: var(--text-secondary); }
+
+  /* ── STATES ── */
   .state-msg {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 100%;
-    color: var(--text-muted);
-    font-size: 12px;
-    flex-direction: column;
-    gap: 8px;
-    padding: 16px;
-    text-align: center;
+    display: flex; align-items: center; justify-content: center;
+    height: 100%; color: var(--text-muted); font-size: 12px;
+    flex-direction: column; gap: 8px;
+    text-align: center; padding: 16px;
   }
   .state-msg.error { color: #b04040; }
-
   .spinner {
-    width: 18px;
-    height: 18px;
+    width: 16px; height: 16px;
     border: 2px solid var(--border);
     border-top-color: var(--text-secondary);
     border-radius: 50%;
-    animation: spin 0.8s linear infinite;
+    animation: spin .8s linear infinite;
   }
   @keyframes spin { to { transform: rotate(360deg); } }
 
@@ -348,9 +357,24 @@
 </style>
 </head>
 <body>
-<div id="widget">
 
-  <!-- ── LEFT: tabs + content ── -->
+<!-- SETUP -->
+<div id="setup-screen">
+  <div id="setup-card">
+    <h2>Last.fm Stats</h2>
+    <p>Enter your Last.fm username to get started.</p>
+    <div class="setup-field">
+      <label>Username</label>
+      <input id="inp-user" type="text" placeholder="e.g. xowaltz" autocomplete="off" spellcheck="false">
+    </div>
+    <div id="setup-err"></div>
+    <button id="setup-btn">Let's go →</button>
+  </div>
+</div>
+
+<!-- WIDGET -->
+<div id="widget">
+  <!-- LEFT: tabs + content -->
   <div id="left-col">
     <div id="tabs">
       <button class="tab-btn active" data-tab="chart">Chart</button>
@@ -358,20 +382,20 @@
     </div>
     <div id="content">
       <div id="chart-view">
-        <div id="loading" class="state-msg"><div class="spinner"></div><span>Loading…</span></div>
-        <div id="album-grid" style="display:none;"></div>
-        <div id="error-msg" class="state-msg error" style="display:none;"></div>
+        <div id="chart-state" class="state-msg"><div class="spinner"></div><span>Loading…</span></div>
+        <div id="album-grid"></div>
       </div>
       <div id="recent-view"></div>
     </div>
   </div>
 
-  <!-- ── RIGHT: title + stats ── -->
+  <!-- RIGHT: title + stats -->
   <div id="right-col">
     <div>
       <div id="period-wrapper">
         <button id="period-btn">
           <span id="period-label">Last 30 days</span>
+          <span class="chev">▼</span>
         </button>
         <div id="period-dropdown">
           <div class="period-option" data-period="7day">Last 7 days</div>
@@ -383,63 +407,90 @@
         </div>
       </div>
       <a id="username-link" href="#" target="_blank">
-        <span id="username-display">—</span>
-        <svg width="13" height="13" viewBox="0 0 19 19" fill="none">
+        <span id="username-display"></span>
+        <svg width="12" height="12" viewBox="0 0 19 19" fill="none">
           <path d="M5.54 13.46L13.46 5.54M13.46 5.54H5.54M13.46 5.54V13.46" stroke="#7d7a75" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
       </a>
+      <button id="change-user-btn">change user</button>
     </div>
-
     <div id="stats">
       <div class="stat-item"><span class="stat-num" id="stat-artists">—</span> <span class="stat-label">Artists</span></div>
       <div class="stat-item"><span class="stat-num" id="stat-albums">—</span> <span class="stat-label">Albums</span></div>
       <div class="stat-item"><span class="stat-num" id="stat-tracks">—</span> <span class="stat-label">Tracks</span></div>
     </div>
   </div>
-
 </div>
 
 <script>
-// ── EDIT THESE ─────────────────────────────────────────────
-const API_KEY  = '636a4e93cbcf470a847fe48ee1641a76';   // ← paste your key here
-const USERNAME = 'xowaltz';          // ← paste your username here
+// ── HARD-CODED API KEY — replace this with your own ────────
+const API_KEY = 'YOUR_LASTFM_API_KEY';
 // ──────────────────────────────────────────────────────────
 
-(function() {
+(function () {
+  let USERNAME = localStorage.getItem('lfm_username') || '';
   let currentPeriod = '1month';
   let currentTab = 'chart';
 
   const PERIOD_LABELS = {
-    '7day':    'Last 7 days',
-    '1month':  'Last 30 days',
-    '3month':  'Last 3 months',
-    '6month':  'Last 6 months',
-    '12month': 'Last 12 months',
-    'overall': 'All time'
+    '7day':'Last 7 days','1month':'Last 30 days','3month':'Last 3 months',
+    '6month':'Last 6 months','12month':'Last 12 months','overall':'All time'
   };
 
+  const setupScreen    = document.getElementById('setup-screen');
+  const inpUser        = document.getElementById('inp-user');
+  const setupBtn       = document.getElementById('setup-btn');
+  const setupErr       = document.getElementById('setup-err');
+  const widgetEl       = document.getElementById('widget');
   const periodBtn      = document.getElementById('period-btn');
   const periodLabel    = document.getElementById('period-label');
   const periodDropdown = document.getElementById('period-dropdown');
   const usernameLink   = document.getElementById('username-link');
-  const usernameDisplay= document.getElementById('username-display');
+  const usernameDisp   = document.getElementById('username-display');
+  const changeUserBtn  = document.getElementById('change-user-btn');
   const statArtists    = document.getElementById('stat-artists');
   const statAlbums     = document.getElementById('stat-albums');
   const statTracks     = document.getElementById('stat-tracks');
   const chartView      = document.getElementById('chart-view');
-  const recentView     = document.getElementById('recent-view');
+  const chartState     = document.getElementById('chart-state');
   const albumGrid      = document.getElementById('album-grid');
-  const loadingEl      = document.getElementById('loading');
-  const errorEl        = document.getElementById('error-msg');
+  const recentView     = document.getElementById('recent-view');
   const tabBtns        = document.querySelectorAll('.tab-btn');
 
-  // init username display
-  usernameDisplay.textContent = USERNAME;
-  usernameLink.href = `https://www.last.fm/user/${USERNAME}`;
+  // boot
+  if (USERNAME) launch();
 
-  loadAll();
+  // ── SETUP ──────────────────────────────────────────────
+  setupBtn.addEventListener('click', trySetup);
+  inpUser.addEventListener('keydown', e => { if (e.key === 'Enter') trySetup(); });
 
-  // ── PERIOD DROPDOWN ────────────────────────────────────
+  function trySetup() {
+    const u = inpUser.value.trim();
+    if (!u) { showSetupErr('Please enter a username.'); return; }
+    USERNAME = u;
+    localStorage.setItem('lfm_username', u);
+    launch();
+  }
+  function showSetupErr(msg) { setupErr.textContent = msg; setupErr.style.display = 'block'; }
+
+  changeUserBtn.addEventListener('click', () => {
+    localStorage.removeItem('lfm_username');
+    USERNAME = '';
+    widgetEl.style.display = 'none';
+    setupScreen.style.display = 'flex';
+    inpUser.value = '';
+    setupErr.style.display = 'none';
+  });
+
+  function launch() {
+    setupScreen.style.display = 'none';
+    widgetEl.style.display = 'flex';
+    usernameDisp.textContent = USERNAME;
+    usernameLink.href = `https://www.last.fm/user/${encodeURIComponent(USERNAME)}`;
+    loadAll();
+  }
+
+  // ── PERIOD ─────────────────────────────────────────────
   periodBtn.addEventListener('click', e => {
     e.stopPropagation();
     periodBtn.classList.toggle('open');
@@ -458,7 +509,8 @@ const USERNAME = 'xowaltz';          // ← paste your username here
       opt.classList.add('active');
       periodBtn.classList.remove('open');
       periodDropdown.classList.remove('open');
-      loadAll();
+      loadStats();
+      if (currentTab === 'chart') loadChart();
     });
   });
 
@@ -469,81 +521,100 @@ const USERNAME = 'xowaltz';          // ← paste your username here
       btn.classList.add('active');
       currentTab = btn.dataset.tab;
       if (currentTab === 'chart') {
-        chartView.style.display = '';
+        chartView.style.display = 'flex';
         recentView.style.display = 'none';
         loadChart();
       } else {
         chartView.style.display = 'none';
-        recentView.style.display = '';
+        recentView.style.display = 'block';
         loadRecent();
       }
     });
   });
 
   // ── API ────────────────────────────────────────────────
-  async function lfmFetch(method, extra = {}) {
-    const params = new URLSearchParams({ method, user: USERNAME, api_key: API_KEY, format: 'json', ...extra });
-    const res = await fetch(`https://ws.audioscrobbler.com/2.0/?${params}`);
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const data = await res.json();
-    if (data.error) throw new Error(data.message || `Error ${data.error}`);
-    return data;
+  async function lfm(method, extra = {}) {
+    const p = new URLSearchParams({ method, user: USERNAME, api_key: API_KEY, format: 'json', ...extra });
+    const r = await fetch(`https://ws.audioscrobbler.com/2.0/?${p}`);
+    if (!r.ok) throw new Error(`HTTP ${r.status}`);
+    const d = await r.json();
+    if (d.error) throw new Error(d.message || `Error ${d.error}`);
+    return d;
   }
 
-  async function loadAll() {
-    loadStats();
-    if (currentTab === 'chart') loadChart();
-    else loadRecent();
-  }
+  function loadAll() { loadStats(); loadChart(); }
 
   // ── STATS ──────────────────────────────────────────────
   async function loadStats() {
-    statArtists.textContent = '—'; statAlbums.textContent = '—'; statTracks.textContent = '—';
+    statArtists.textContent = statAlbums.textContent = statTracks.textContent = '—';
     try {
       const [a, al, tr] = await Promise.all([
-        lfmFetch('user.gettopartists', { period: currentPeriod, limit: 1 }),
-        lfmFetch('user.gettopalbums',  { period: currentPeriod, limit: 1 }),
-        lfmFetch('user.gettoptracks',  { period: currentPeriod, limit: 1 })
+        lfm('user.gettopartists', { period: currentPeriod, limit: 1 }),
+        lfm('user.gettopalbums',  { period: currentPeriod, limit: 1 }),
+        lfm('user.gettoptracks',  { period: currentPeriod, limit: 1 })
       ]);
       statArtists.textContent = a.topartists['@attr']?.total  ?? '?';
       statAlbums.textContent  = al.topalbums['@attr']?.total  ?? '?';
       statTracks.textContent  = tr.toptracks['@attr']?.total  ?? '?';
-    } catch(e) { /* silent */ }
+    } catch (_) {}
   }
 
   // ── CHART ──────────────────────────────────────────────
   async function loadChart() {
-    loadingEl.style.display = '';
+    chartState.style.display = 'flex';
+    chartState.className = 'state-msg';
+    chartState.innerHTML = '<div class="spinner"></div><span>Loading…</span>';
     albumGrid.style.display = 'none';
-    errorEl.style.display = 'none';
     try {
-      const data = await lfmFetch('user.gettopalbums', { period: currentPeriod, limit: 50 });
+      const data = await lfm('user.gettopalbums', { period: currentPeriod, limit: 50 });
       renderGrid(data.topalbums.album || []);
-    } catch(e) { showError(e.message); }
+    } catch (e) {
+      chartState.className = 'state-msg error';
+      chartState.textContent = e.message;
+    }
   }
 
   function renderGrid(albums) {
-    loadingEl.style.display = 'none';
+    chartState.style.display = 'none';
     albumGrid.innerHTML = '';
-    if (!albums.length) { showError('No album data for this period.'); return; }
+    if (!albums.length) {
+      chartState.className = 'state-msg';
+      chartState.textContent = 'No album data for this period.';
+      chartState.style.display = 'flex';
+      return;
+    }
 
-    const cols = computeCols();
-    albumGrid.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
+    const contentEl = document.getElementById('content');
+    const availW = contentEl.offsetWidth - 24;
+    const availH = contentEl.offsetHeight - 8;
+
+    // cols based on width
+    let cols = 5;
+    if (availW < 150) cols = 2;
+    else if (availW < 240) cols = 3;
+    else if (availW < 340) cols = 4;
+    else if (availW < 460) cols = 5;
+    else if (availW < 580) cols = 6;
+    else if (availW < 720) cols = 7;
+    else cols = 8;
+
+    const cellSize = Math.floor((availW - (cols - 1) * 4) / cols);
+    const rows = Math.max(1, Math.floor((availH + 4) / (cellSize + 4)));
+    const total = cols * rows;
+
     albumGrid.style.display = 'grid';
+    albumGrid.style.gridTemplateColumns = `repeat(${cols}, ${cellSize}px)`;
+    albumGrid.style.gridTemplateRows    = `repeat(${rows}, ${cellSize}px)`;
 
-    albums.forEach(album => {
+    albums.slice(0, total).forEach(album => {
       const cell = document.createElement('div');
       cell.className = 'album-cell';
 
-      const imgSrc = getBestImage(album.image);
+      const imgSrc = bestImg(album.image);
       if (imgSrc) {
         const img = document.createElement('img');
-        img.src = imgSrc;
-        img.alt = album.name;
-        img.loading = 'lazy';
-        img.onerror = function() {
-          this.parentNode.replaceChild(makeNoArt(album.name), this);
-        };
+        img.src = imgSrc; img.alt = ''; img.loading = 'lazy';
+        img.onerror = function () { this.replaceWith(makeNoArt(album.name)); };
         cell.appendChild(img);
       } else {
         cell.appendChild(makeNoArt(album.name));
@@ -568,23 +639,16 @@ const USERNAME = 'xowaltz';          // ← paste your username here
     return d;
   }
 
-  function computeCols() {
-    const w = document.getElementById('content').offsetWidth - 24;
-    if (w < 150) return 2;
-    if (w < 240) return 3;
-    if (w < 340) return 4;
-    if (w < 460) return 5;
-    if (w < 580) return 6;
-    return 7;
-  }
-
-  // ── RECENT ─────────────────────────────────────────────
+  // ── RECENT TRACKS ──────────────────────────────────────
   async function loadRecent() {
     recentView.innerHTML = '<div class="state-msg"><div class="spinner"></div><span>Loading…</span></div>';
     try {
-      const data = await lfmFetch('user.getrecenttracks', { limit: 50 });
-      renderRecent(data.recenttracks.track || []);
-    } catch(e) {
+      const data = await lfm('user.getrecenttracks', { limit: 50 });
+      // API can return a single object instead of array when only 1 track
+      const raw = data.recenttracks.track;
+      const tracks = Array.isArray(raw) ? raw : raw ? [raw] : [];
+      renderRecent(tracks);
+    } catch (e) {
       recentView.innerHTML = `<div class="state-msg error">${esc(e.message)}</div>`;
     }
   }
@@ -592,76 +656,91 @@ const USERNAME = 'xowaltz';          // ← paste your username here
   function renderRecent(tracks) {
     recentView.innerHTML = '';
     if (!tracks.length) {
-      recentView.innerHTML = '<div class="state-msg">No recent tracks.</div>';
+      recentView.innerHTML = '<div class="state-msg">No tracks found.</div>';
       return;
     }
+
     tracks.forEach(track => {
       const nowPlaying = track['@attr']?.nowplaying === 'true';
+      const artistName = track.artist?.['#text'] || track.artist?.name || '';
+      const imgSrc = bestImg(track.image);
+
       const item = document.createElement('div');
       item.className = 'track-item';
 
-      const imgSrc = getBestImage(track.image);
-      const thumbEl = imgSrc
-        ? `<img class="track-thumb" src="${esc(imgSrc)}" alt="" loading="lazy">`
-        : `<div class="track-thumb no-img">♪</div>`;
+      // thumbnail
+      if (imgSrc) {
+        const img = document.createElement('img');
+        img.className = 'track-thumb';
+        img.src = imgSrc;
+        img.alt = '';
+        img.loading = 'lazy';
+        img.onerror = function () { this.replaceWith(makePlaceholder()); };
+        item.appendChild(img);
+      } else {
+        item.appendChild(makePlaceholder());
+      }
 
-      const timeEl = nowPlaying
-        ? `<span class="track-time now-playing">▶ now</span>`
-        : `<span class="track-time">${formatTime(track.date?.uts)}</span>`;
+      // track info
+      const info = document.createElement('div');
+      info.className = 'track-info';
+      info.innerHTML = `<div class="track-name">${esc(track.name)}</div><div class="track-artist">${esc(artistName)}</div>`;
+      item.appendChild(info);
 
-      item.innerHTML = `
-        ${thumbEl}
-        <div class="track-info">
-          <div class="track-name">${esc(track.name)}</div>
-          <div class="track-artist">${esc(track.artist['#text'] || track.artist?.name || '')}</div>
-        </div>
-        ${timeEl}`;
+      // timestamp
+      const timeEl = document.createElement('div');
+      if (nowPlaying) {
+        timeEl.className = 'track-time live';
+        timeEl.innerHTML = '<span class="live-dot"></span>now';
+      } else {
+        timeEl.className = 'track-time';
+        timeEl.textContent = fmtTime(track.date?.uts);
+      }
+      item.appendChild(timeEl);
+
       item.addEventListener('click', () => track.url && window.open(track.url, '_blank'));
       recentView.appendChild(item);
     });
   }
 
+  function makePlaceholder() {
+    const d = document.createElement('div');
+    d.className = 'track-thumb-placeholder';
+    d.textContent = '♪';
+    return d;
+  }
+
   // ── HELPERS ────────────────────────────────────────────
-  function getBestImage(images) {
+  function bestImg(images) {
     if (!images?.length) return null;
-    for (const size of ['extralarge','large','medium','small']) {
-      const f = images.find(i => i.size === size && i['#text']);
+    for (const sz of ['extralarge', 'large', 'medium', 'small']) {
+      const f = images.find(i => i.size === sz && i['#text']);
       if (f) return f['#text'];
     }
     return images[images.length - 1]?.['#text'] || null;
   }
 
-  function formatTime(uts) {
+  function fmtTime(uts) {
     if (!uts) return '';
-    const diff = Math.floor((Date.now() - uts * 1000) / 1000);
-    if (diff < 60)    return 'just now';
-    if (diff < 3600)  return `${Math.floor(diff/60)}m ago`;
-    if (diff < 86400) return `${Math.floor(diff/3600)}h ago`;
-    if (diff < 604800)return `${Math.floor(diff/86400)}d ago`;
-    return new Date(uts*1000).toLocaleDateString(undefined, { month:'short', day:'numeric' });
+    const s = Math.floor(Date.now() / 1000 - Number(uts));
+    if (s < 60)     return 'just now';
+    if (s < 3600)   return `${Math.floor(s / 60)}m ago`;
+    if (s < 86400)  return `${Math.floor(s / 3600)}h ago`;
+    if (s < 604800) return `${Math.floor(s / 86400)}d ago`;
+    return new Date(uts * 1000).toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
   }
 
-  function esc(str) {
-    return String(str||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  function esc(s) {
+    return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
   }
 
-  function showError(msg) {
-    loadingEl.style.display = 'none';
-    albumGrid.style.display = 'none';
-    errorEl.style.display = '';
-    errorEl.textContent = msg;
-  }
-
-  // Recompute grid cols on resize
-  let rt;
+  // recompute grid on resize
+  let resizeT;
   window.addEventListener('resize', () => {
-    clearTimeout(rt);
-    rt = setTimeout(() => {
-      if (currentTab === 'chart' && albumGrid.style.display !== 'none') {
-        albumGrid.style.gridTemplateColumns = `repeat(${computeCols()}, 1fr)`;
-      }
-    }, 120);
+    clearTimeout(resizeT);
+    resizeT = setTimeout(() => { if (currentTab === 'chart' && USERNAME) loadChart(); }, 150);
   });
+
 })();
 </script>
 </body>

@@ -279,6 +279,7 @@
 #header {
   display: flex;
   flex-direction: column;
+  gap: 0.2vh;
 }
 	
   #period-btn {
@@ -286,7 +287,7 @@
     font-size: clamp(17px, 3.8vw, 26px);
     color: var(--text-primary);
     background: none; border: none; cursor: pointer;
-    padding: 0; text-align: left; line-height: 1.07;
+    padding: 0; text-align: left; line-height: 1.2;
     display: flex; align-items: flex-start; gap: 4px;
     transition: 0.15s ease-in;
   }
@@ -335,7 +336,7 @@
   #change-user-btn {
     background: none; border: none; cursor: pointer;
     font-size: 10px; color: var(--text-muted);
-    padding: 0; margin-top: 6px;
+    padding: 0; margin-top: 0.2vh;
     font-family: var(--font-sans);
     display: block; text-align: left;
 	transition: 0.15s;
@@ -345,7 +346,7 @@
   #stats { display: flex; flex-direction: column; gap: 7px; }
   .stat-item { white-space: nowrap; }
   .stat-num { 
-	  font-weight: 700; 
+	  font-weight: 500; 
 	  font-size: clamp(16px, 3.3vw, 24px); 
 	  color: var(--text-primary); 
   	  font-family: var(--font-serif);}
